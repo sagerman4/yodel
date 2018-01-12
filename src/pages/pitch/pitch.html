@@ -7,14 +7,7 @@
 </ion-header>
 
 <ion-content padding>
-  	<p>
-		<button on-tap="this.innerText = togglePlayback()">use demo audio</button>
-		<button on-tap="toggleLiveInput()">use live input</button>
-		<button on-tap="toggleOscillator()">use oscillator</button>
-		<!--<button onclick="updatePitch(0);">sample</button>-->
-	</p>
-
-	<div id="detector" class="vague">
+  	<div id="detector" class="vague">
 		<div class="pitch"><span id="pitch">--</span>Hz</div>
 		<div class="note"><span id="note">--</span></div>   
 		<canvas id="output" width=300 height=42></canvas>

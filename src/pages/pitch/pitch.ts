@@ -85,6 +85,8 @@ export class PitchPage implements OnInit {
 		  	reader.readAsArrayBuffer(e.dataTransfer.files[0]);
 		  	return false;
 		};
+
+		this.toggleLiveInput();
     }
 
     error() {
@@ -110,32 +112,6 @@ export class PitchPage implements OnInit {
 	    this.analyser.fftSize = 2048;
 	    this.mediaStreamSource.connect( this.analyser );
 	    this.updatePitch();
-	}
-
-	toggleOscillator() {
-	    if (this.isPlaying) {
-	        //stop playing and return
-	        this.sourceNode.stop( 0 );
-	        this.sourceNode = null;
-	        this.analyser = null;
-	        this.isPlaying = false;
-			if (!window.cancelAnimationFrame)
-				window.cancelAnimationFrame = window.webkitCancelAnimationFrame;
-	        window.cancelAnimationFrame( this.rafID );
-	        return "play oscillator";
-	    }
-	    this.sourceNode = this.audioContext.createOscillator();
-
-	    this.analyser = this.audioContext.createthis.analyser();
-	    this.analyser.fftSize = 2048;
-	    this.sourceNode.connect( this.analyser );
-	    this.analyser.connect( this.audioContext.destination );
-	    this.sourceNode.start(0);
-	    this.isPlaying = true;
-	    this.isLiveInput = false;
-	    this.updatePitch();
-
-	    return "stop";
 	}
 
 	toggleLiveInput() {
