@@ -42,14 +42,6 @@ export class PitchPage implements OnInit {
 
   	    let  MAX_SIZE = Math.max(4,Math.floor(this.audioContext.sampleRate/5000));	// corresponds to a 5kHz signal
 		let request = new XMLHttpRequest();
-		request.open("GET", "../sounds/whistling3.ogg", true);
-		request.responseType = "arraybuffer";
-		request.onload = () => {
-		  this.audioContext.decodeAudioData( request.response, function(buffer) { 
-		    	this.theBuffer = buffer;
-			} );
-		}
-		request.send();
 
 		this.detectorElem = document.getElementById( "detector" );
 		this.canvasElem = document.getElementById( "output" );
@@ -85,33 +77,48 @@ export class PitchPage implements OnInit {
 		  	reader.readAsArrayBuffer(e.dataTransfer.files[0]);
 		  	return false;
 		};
-
+		
 		this.toggleLiveInput();
     }
 
-    error() {
+    error(e) {
+    	console.log(e);
 	    alert('Stream generation failed.');
 	}
 
 	getUserMedia(dictionary, callback) {
 	    try {
-	        navigator.getUserMedia = 
-	        	navigator.getUserMedia;
-	        navigator.getUserMedia(dictionary, callback, this.error);
+	    	console.log('here1');
+	        navigator.mediaDevices.getUserMedia(dictionary)
+	        	.then(callback)
+	        	.catch(this.error);
+
+	    	console.log('here2');
 	    } catch (e) {
+
+	    	console.log('here3');
 	        alert('getUserMedia threw exception :' + e);
 	    }
 	}
 
 	gotStream=(stream) => {
 	    // Create an AudioNode from the stream.
+
+	    	console.log('here4');
 	    this.mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
+	    	console.log('here5');
 
 	    // Connect it to the destination.
+
+	    	console.log('here6');
 	    this.analyser = this.audioContext.createAnalyser();
 	    this.analyser.fftSize = 2048;
 	    this.mediaStreamSource.connect( this.analyser );
+
+	    	console.log('here7');
 	    this.updatePitch();
+
+	    	console.log('here8');
 	}
 
 	toggleLiveInput() {
@@ -127,45 +134,9 @@ export class PitchPage implements OnInit {
 	    }
 	    this.getUserMedia(
 	    	{
-	            "audio": {
-	                "mandatory": {
-	                    "googEchoCancellation": "false",
-	                    "googAutoGainControl": "false",
-	                    "googNoiseSuppression": "false",
-	                    "googHighpassFilter": "false"
-	                },
-	                "optional": []
-	            },
-	        }, this.gotStream);
-	}
-
-	togglePlayback() {
-	    if (this.isPlaying) {
-	        //stop playing and return
-	        this.sourceNode.stop( 0 );
-	        this.sourceNode = null;
-	        this.analyser = null;
-	        this.isPlaying = false;
-			if (!window.cancelAnimationFrame)
-				window.cancelAnimationFrame = window.webkitCancelAnimationFrame;
-	        window.cancelAnimationFrame( this.rafID );
-	        return "start";
-	    }
-
-	    this.sourceNode = this.audioContext.createBufferSource();
-	    this.sourceNode.buffer = this.theBuffer;
-	    this.sourceNode.loop = true;
-
-	    this.analyser = this.audioContext.createthis.analyser();
-	    this.analyser.fftSize = 2048;
-	    this.sourceNode.connect( this.analyser );
-	    this.analyser.connect( this.audioContext.destination );
-	    this.sourceNode.start( 0 );
-	    this.isPlaying = true;
-	    this.isLiveInput = false;
-	    this.updatePitch();
-
-	    return "stop";
+			    audio: true,
+			    video: false
+			}, this.gotStream);
 	}
 
 	noteFromPitch( frequency ) {

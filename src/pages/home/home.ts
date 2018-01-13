@@ -9,8 +9,8 @@ import { PitchPage } from '../pitch/pitch';
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController) {
-
+  	constructor(
+  		public navCtrl: NavController) {
   }
 
   matchPitch() {
